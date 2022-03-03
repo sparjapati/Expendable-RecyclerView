@@ -44,4 +44,8 @@ class HomeActivityVM : ViewModel() {
 
         })
     }
+
+    fun refreshNews() {
+        fetchNews()
+    }
 }

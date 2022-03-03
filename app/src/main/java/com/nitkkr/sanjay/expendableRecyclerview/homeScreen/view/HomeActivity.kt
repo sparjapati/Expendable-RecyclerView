@@ -1,7 +1,6 @@
 package com.nitkkr.sanjay.expendableRecyclerview.homeScreen.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -12,7 +11,6 @@ import com.nitkkr.sanjay.expendableRecyclerview.homeScreen.adapter.HomeScreenRec
 import com.nitkkr.sanjay.expendableRecyclerview.homeScreen.adapter.RecyclerViewOnItemClickListener
 import com.nitkkr.sanjay.expendableRecyclerview.homeScreen.viewModel.HomeActivityVM
 import com.nitkkr.sanjay.expendableRecyclerview.networks.ResultsItem
-import com.nitkkr.sanjay.expendableRecyclerview.utils.Constants.TAG
 import edu.nitkkr.sanjay.postmanApi.utils.Status
 
 class HomeActivity : AppCompatActivity() {
@@ -33,6 +31,9 @@ class HomeActivity : AppCompatActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.lifecycleOwner = this
+        binding.swipeRefresh.setOnRefreshListener {
+            viewModel.refreshNews()
+        }
         viewModel = ViewModelProvider(this)[HomeActivityVM::class.java]
     }
 
@@ -63,10 +64,12 @@ class HomeActivity : AppCompatActivity() {
                 Status.LOADING -> {
                     if (resultItemsListResponse.data == null || resultItemsListResponse.data.size == 0)
                         binding.ivStatusImage.visibility = View.VISIBLE
+                    else
+                        binding.swipeRefresh.isRefreshing = true
                 }
                 Status.SUCCESS -> {
-                    Log.d(TAG, "setObservers: ${resultItemsListResponse.data?.size ?: 0} items submitting")
                     binding.ivStatusImage.visibility = View.GONE
+                    binding.swipeRefresh.isRefreshing = false
                     adapter.addAll(resultItemsListResponse.data)
                 }
                 Status.ERROR -> {
