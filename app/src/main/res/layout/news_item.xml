@@ -7,7 +7,7 @@
 
         <variable
             name="data"
-            type="com.nitkkr.sanjay.expendableRecyclerview.homeScreen.NewsItem" />
+            type="com.nitkkr.sanjay.expendableRecyclerview.networks.ResultsItem" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,7 +29,6 @@
 
         <ImageView
             android:id="@+id/iv_logo"
-            img_src="@{data.src}"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_marginStart="10dp"

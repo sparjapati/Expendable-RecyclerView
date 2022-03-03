@@ -1,31 +1,37 @@
 package com.nitkkr.sanjay.expendableRecyclerview.homeScreen.viewModel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.nitkkr.sanjay.expendableRecyclerview.homeScreen.NewsItem
+import com.nitkkr.sanjay.expendableRecyclerview.networks.NewsApi
+import com.nitkkr.sanjay.expendableRecyclerview.networks.NewsItem
+import com.nitkkr.sanjay.expendableRecyclerview.utils.Constants.TAG
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class HomeActivityVM : ViewModel() {
 
-    private val _fetchedResponse = MutableLiveData<ArrayList<NewsItem>>()
-    val fetchedData: LiveData<ArrayList<NewsItem>>
+    private val _fetchedResponse = MutableLiveData<NewsItem>()
+    val fetchedData: LiveData<NewsItem>
         get() = _fetchedResponse
 
     init {
-        _fetchedResponse.value = ArrayList()
         fetchNews()
     }
 
     private fun fetchNews() {
-        for (i in 1..10) {
-            _fetchedResponse.value!!.add(
-                NewsItem(
-                    100000008232540 + i,
-                    "As Tanks Rolled Into Ukraine, So Did Malware. Then Microsoft Entered the War.",
-                    "New York Times",
-                    "After years of talks about the need for public-private partnerships to combat cyberattacks, the war in Ukraine is stress-testing the system."
-                )
-            )
-        }
+        NewsApi.apiService.getNews().enqueue(object : Callback<NewsItem> {
+            override fun onResponse(call: Call<NewsItem>, response: Response<NewsItem>) {
+                Log.d(TAG, "onResponse: ${response.body()?.results!!.size ?: 0} items received")
+                _fetchedResponse.value = response.body()
+            }
+
+            override fun onFailure(call: Call<NewsItem>, t: Throwable) {
+                Log.d(TAG, "onFailure: ${t.message}")
+            }
+
+        })
     }
 }

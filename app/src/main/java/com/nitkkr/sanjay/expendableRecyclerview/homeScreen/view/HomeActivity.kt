@@ -30,7 +30,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setAdapter() {
-        adapter = HomeScreenRecyclerViewAdapter(viewModel.fetchedData.value!!)
+        adapter = HomeScreenRecyclerViewAdapter(viewModel.fetchedData.value?.results ?: ArrayList())
         val layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.rvNews.layoutManager = layoutManager
@@ -39,7 +39,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun setObservers() {
         viewModel.fetchedData.observe(this) { newList ->
-            adapter.submitList(newList)
+            adapter.submitList(newList.results)
         }
     }
 
