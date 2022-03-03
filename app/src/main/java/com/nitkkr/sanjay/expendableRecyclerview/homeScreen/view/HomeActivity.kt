@@ -1,12 +1,17 @@
 package com.nitkkr.sanjay.expendableRecyclerview.homeScreen.view
 
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.nitkkr.sanjay.expendableRecyclerview.R
 import com.nitkkr.sanjay.expendableRecyclerview.databinding.ActivityHomeBinding
 import com.nitkkr.sanjay.expendableRecyclerview.homeScreen.adapter.HomeScreenRecyclerViewAdapter
 import com.nitkkr.sanjay.expendableRecyclerview.homeScreen.viewModel.HomeActivityVM
+import com.nitkkr.sanjay.expendableRecyclerview.utils.Constants.TAG
+import edu.nitkkr.sanjay.postmanApi.utils.Status
 
 class HomeActivity : AppCompatActivity() {
 
@@ -30,7 +35,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setAdapter() {
-        adapter = HomeScreenRecyclerViewAdapter(viewModel.fetchedData.value?.results ?: ArrayList())
+        adapter = HomeScreenRecyclerViewAdapter(viewModel.fetchedData.value?.data ?: ArrayList())
         val layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.rvNews.layoutManager = layoutManager
@@ -38,8 +43,22 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setObservers() {
-        viewModel.fetchedData.observe(this) { newList ->
-            adapter.submitList(newList.results)
+        viewModel.fetchedData.observe(this) { resultItemsListResponse ->
+            when (resultItemsListResponse.status) {
+                Status.LOADING -> {
+                    if (resultItemsListResponse.data == null || resultItemsListResponse.data.size == 0)
+                        binding.ivStatusImage.visibility = View.VISIBLE
+                }
+                Status.SUCCESS -> {
+                    Log.d(TAG, "setObservers: ${resultItemsListResponse.data?.size ?: 0} items submitting")
+                    binding.ivStatusImage.visibility = View.GONE
+                    adapter.addAll(resultItemsListResponse.data)
+                }
+                Status.ERROR -> {
+                    if (resultItemsListResponse.data == null || resultItemsListResponse.data.size == 0)
+                        binding.ivStatusImage.setImageResource(R.drawable.ic_status_error)
+                }
+            }
         }
     }
 

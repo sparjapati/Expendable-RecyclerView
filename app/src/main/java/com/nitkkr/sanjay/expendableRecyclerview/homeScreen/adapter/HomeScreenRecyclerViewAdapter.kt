@@ -18,13 +18,13 @@ class HomeScreenRecyclerViewAdapter(private var currentList: ArrayList<ResultsIt
     }
 
     override fun getItemCount(): Int = currentList.size
+
     fun addAll(newList: ArrayList<ResultsItem?>?) {
-        var curr = currentList
-        if (curr != null && newList != null)
+        val curr = currentList
+        if (newList != null)
             curr.addAll(newList)
-        else
-            curr = newList!!
         currentList = curr
+        submitList(currentList)
     }
 
     fun submitList(newList: ArrayList<ResultsItem?>?) {
