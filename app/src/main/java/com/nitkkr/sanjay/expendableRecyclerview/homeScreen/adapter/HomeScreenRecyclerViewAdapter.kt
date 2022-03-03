@@ -2,36 +2,32 @@ package com.nitkkr.sanjay.expendableRecyclerview.homeScreen.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.nitkkr.sanjay.expendableRecyclerview.databinding.NewsItemBinding
 import com.nitkkr.sanjay.expendableRecyclerview.networks.ResultsItem
 import com.nitkkr.sanjay.expendableRecyclerview.utils.imageSrc
 
-class HomeScreenRecyclerViewAdapter(private var currentList: ArrayList<ResultsItem?>) : RecyclerView.Adapter<NewsViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
+class HomeScreenRecyclerViewAdapter : ListAdapter<ResultsItem, RecyclerView.ViewHolder>(Callbacks) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return NewsViewHolder.from(parent)
     }
 
-    override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
-        currentList[position]?.let { holder.bind(it) }
-
-    }
-
-    override fun getItemCount(): Int = currentList.size
-
     fun addAll(newList: ArrayList<ResultsItem?>?) {
-        val curr = currentList
+        val curr = ArrayList(currentList)
         if (newList != null)
             curr.addAll(newList)
-        currentList = curr
-        submitList(currentList)
+        submitList(curr)
     }
 
-    fun submitList(newList: ArrayList<ResultsItem?>?) {
-        if (newList != null) {
-            currentList = newList
-            notifyDataSetChanged()
-        }
+    override fun submitList(list: List<ResultsItem?>?) {
+        super.submitList(list?.let { ArrayList(it) })
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is NewsViewHolder)
+            holder.bind(currentList[position])
     }
 
 }
@@ -50,4 +46,15 @@ class NewsViewHolder private constructor(private val binding: NewsItemBinding) :
             data.media[0]!!.mediaMetadata?.get(0)?.url?.let { binding.ivLogo.imageSrc(it) }
     }
 }
+
+object Callbacks : DiffUtil.ItemCallback<ResultsItem>() {
+    override fun areItemsTheSame(oldItem: ResultsItem, newItem: ResultsItem): Boolean {
+        return oldItem.id == newItem.id
+    }
+
+    override fun areContentsTheSame(oldItem: ResultsItem, newItem: ResultsItem): Boolean {
+        return oldItem == newItem
+    }
+}
+
 

@@ -35,7 +35,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setAdapter() {
-        adapter = HomeScreenRecyclerViewAdapter(viewModel.fetchedData.value?.data ?: ArrayList())
+        adapter = HomeScreenRecyclerViewAdapter()
         val layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.rvNews.layoutManager = layoutManager
