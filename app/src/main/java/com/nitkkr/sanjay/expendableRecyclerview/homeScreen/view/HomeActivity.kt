@@ -9,7 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.nitkkr.sanjay.expendableRecyclerview.R
 import com.nitkkr.sanjay.expendableRecyclerview.databinding.ActivityHomeBinding
 import com.nitkkr.sanjay.expendableRecyclerview.homeScreen.adapter.HomeScreenRecyclerViewAdapter
+import com.nitkkr.sanjay.expendableRecyclerview.homeScreen.adapter.RecyclerViewOnItemClickListener
 import com.nitkkr.sanjay.expendableRecyclerview.homeScreen.viewModel.HomeActivityVM
+import com.nitkkr.sanjay.expendableRecyclerview.networks.ResultsItem
 import com.nitkkr.sanjay.expendableRecyclerview.utils.Constants.TAG
 import edu.nitkkr.sanjay.postmanApi.utils.Status
 
@@ -35,7 +37,20 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setAdapter() {
-        adapter = HomeScreenRecyclerViewAdapter()
+        adapter = HomeScreenRecyclerViewAdapter(object : RecyclerViewOnItemClickListener<ResultsItem> {
+            override fun onMainViewClicked(obj: ResultsItem) {
+            }
+
+            override fun expendItem(position: Int) {
+                adapter.setExpendable(position, true)
+            }
+
+            override fun collapseItem(position: Int) {
+                adapter.setExpendable(position, false)
+            }
+
+
+        })
         val layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.rvNews.layoutManager = layoutManager

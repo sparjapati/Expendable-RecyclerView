@@ -129,4 +129,6 @@ data class ResultsItem(
 
     @field:SerializedName("byline")
     val byline: String? = null,
+
+    var isExpended: Boolean = false
 ) : Parcelable

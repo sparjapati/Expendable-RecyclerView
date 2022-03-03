@@ -19,6 +19,7 @@ class HomeActivityVM : ViewModel() {
         get() = _fetchedResponse
 
     init {
+        _fetchedResponse.value = Response.loading()
         fetchNews()
     }
 
