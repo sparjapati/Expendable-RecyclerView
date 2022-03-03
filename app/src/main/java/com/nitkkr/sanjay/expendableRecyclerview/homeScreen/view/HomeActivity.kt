@@ -1,5 +1,6 @@
 package com.nitkkr.sanjay.expendableRecyclerview.homeScreen.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -7,10 +8,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nitkkr.sanjay.expendableRecyclerview.R
 import com.nitkkr.sanjay.expendableRecyclerview.databinding.ActivityHomeBinding
+import com.nitkkr.sanjay.expendableRecyclerview.detailScreen.DetailActivity
 import com.nitkkr.sanjay.expendableRecyclerview.homeScreen.adapter.HomeScreenRecyclerViewAdapter
 import com.nitkkr.sanjay.expendableRecyclerview.homeScreen.adapter.RecyclerViewOnItemClickListener
 import com.nitkkr.sanjay.expendableRecyclerview.homeScreen.viewModel.HomeActivityVM
 import com.nitkkr.sanjay.expendableRecyclerview.networks.ResultsItem
+import com.nitkkr.sanjay.expendableRecyclerview.utils.Constants
 import edu.nitkkr.sanjay.postmanApi.utils.Status
 
 class HomeActivity : AppCompatActivity() {
@@ -40,6 +43,12 @@ class HomeActivity : AppCompatActivity() {
     private fun setAdapter() {
         adapter = HomeScreenRecyclerViewAdapter(object : RecyclerViewOnItemClickListener<ResultsItem> {
             override fun onMainViewClicked(obj: ResultsItem) {
+                startActivity(
+                    Intent(this@HomeActivity, DetailActivity::class.java).putExtra(
+                        Constants.HOME_ACTIVITY_INTENT,
+                        obj
+                    )
+                )
             }
 
             override fun expendItem(position: Int) {

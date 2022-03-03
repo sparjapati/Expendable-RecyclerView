@@ -21,7 +21,6 @@
             android:layout_height="0dp"
             android:layout_marginRight="10dp"
             android:elevation="2dp"
-            android:text="@{}"
             app:layout_constraintBottom_toBottomOf="@id/iv_logo"
             app:layout_constraintEnd_toStartOf="@id/iv_expend"
             app:layout_constraintStart_toStartOf="@+id/iv_logo"

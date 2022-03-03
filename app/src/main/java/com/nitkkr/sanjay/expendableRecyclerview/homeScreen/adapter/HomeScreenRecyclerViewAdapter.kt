@@ -13,23 +13,13 @@ import com.nitkkr.sanjay.expendableRecyclerview.networks.ResultsItem
 import com.nitkkr.sanjay.expendableRecyclerview.utils.Constants.TAG
 import com.nitkkr.sanjay.expendableRecyclerview.utils.imageSrc
 
-class HomeScreenRecyclerViewAdapter(private val clickListener: RecyclerViewOnItemClickListener<ResultsItem>) : ListAdapter<ResultsItem, RecyclerView.ViewHolder>(Callbacks) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+class HomeScreenRecyclerViewAdapter(private val clickListener: RecyclerViewOnItemClickListener<ResultsItem>) : ListAdapter<ResultsItem, NewsViewHolder>(Callbacks) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
         return NewsViewHolder.from(parent)
     }
 
-    fun addAll(data: ArrayList<ResultsItem?>?) {
-        val list = ArrayList(currentList)
-        data?.let { list.addAll(it).also { submitList(list) } }
-    }
-
-    override fun submitList(list: List<ResultsItem?>?) {
-        super.submitList(list?.let { ArrayList(it) })
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is NewsViewHolder)
-            holder.bind(position, currentList[position], clickListener)
+    override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
+        holder.bind(position, currentList[position], clickListener)
     }
 
     fun setExpendable(position: Int, value: Boolean) {
@@ -37,6 +27,15 @@ class HomeScreenRecyclerViewAdapter(private val clickListener: RecyclerViewOnIte
         list[position].isExpended = value
         submitList(list)
         notifyItemChanged(position)
+    }
+
+    override fun submitList(list: List<ResultsItem?>?) {
+        super.submitList(list?.let { ArrayList(it) })
+    }
+
+    fun addAll(data: ArrayList<ResultsItem?>?) {
+        val list = ArrayList(currentList)
+        data?.let { list.addAll(it).also { submitList(list) } }
     }
 
 }
@@ -61,27 +60,30 @@ class NewsViewHolder private constructor(private val binding: NewsItemBinding) :
         )
         binding.tvDesc.visibility = if (data.isExpended) View.VISIBLE else View.GONE
 
-        binding.vwMain.setOnClickListener {
-            if (expendedItem == NO_EXPENDED) {
-                Log.d(TAG, "bind: no item expend so expend $position item")
-                clickListener.expendItem(position)
-                expendedItem = position
-            } else {
-                if (position == expendedItem) {
+        binding.ivExpend.setOnClickListener {
+            expendedItem = when {
+                expendedItem == NO_EXPENDED -> {
+                    Log.d(TAG, "bind: no item expend so expend $position item")
+                    clickListener.expendItem(position)
+                    position
+                }
+                position == expendedItem -> {
                     Log.d(TAG, "bind: expended item clicked so collapse $expendedItem item")
                     clickListener.collapseItem(position)
-                    expendedItem = NO_EXPENDED
-                } else {
-                    Log.d(
-                        TAG,
-                        "bind: different item clicked so collapse $expendedItem item and expend $position item"
-                    )
+                    NO_EXPENDED
+                }
+                else -> {
+                    Log.d(TAG, "bind: different item clicked so collapse $expendedItem item and expend $position item")
                     clickListener.collapseItem(expendedItem)
                     clickListener.expendItem(position)
-                    expendedItem = position
+                    position
                 }
             }
         }
+        binding.vwMain.setOnClickListener {
+            clickListener.onMainViewClicked(data)
+        }
+
     }
 }
 
